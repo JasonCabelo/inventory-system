@@ -1,6 +1,5 @@
 {
   "version": 2,
-  "outputDirectory": "src/dist",
   "builds": [
     {
       "src": "api/index.js",
@@ -21,7 +20,8 @@
     },
     {
       "src": "/(.*)",
-      "dest": "/src/index.html"
+      "dest": "/index.html"
     }
-  ]
+  ],
+  "outputDirectory": "src/dist"
 }
