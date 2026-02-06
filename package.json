@@ -1,0 +1,21 @@
+{
+  "name": "enterprise-inventory-system",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "api",
+    "src"
+  ],
+  "scripts": {
+    "install:all": "npm install",
+    "dev": "concurrently \"npm run dev --workspace=api\" \"npm run dev --workspace=src\"",
+    "build": "npm run build --workspace=src",
+    "start": "npm run start --workspace=api"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.1"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3"
+  }
+}
