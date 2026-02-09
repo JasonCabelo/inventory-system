@@ -60,7 +60,7 @@ export default function Dashboard() {
     },
   })
 
-  const { data: users } = useQuery({
+  const { data: users, isLoading: usersLoading, error: usersError } = useQuery({
     queryKey: ['users'],
     queryFn: async () => {
       const { data } = await axiosInstance.get('/users')
@@ -68,6 +68,8 @@ export default function Dashboard() {
     },
     enabled: isAdmin,
   })
+
+  console.log('Dashboard Debug:', { user, isAdmin, users, usersLoading, usersError })
 
   const deleteProductMutation = useMutation({
     mutationFn: async (id) => {
