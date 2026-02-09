@@ -23,6 +23,9 @@ export default function Dashboard() {
   const { data: user } = useAuth()
   const [activeTab, setActiveTab] = useState('products')
 
+  const isAdmin = user?.role === 'ADMIN'
+  const isManager = user?.role === 'MANAGER' || isAdmin
+
   const logoutMutation = useMutation({
     mutationFn: async () => {
       await axiosInstance.post('/auth/logout')
@@ -83,9 +86,6 @@ export default function Dashboard() {
       queryClient.invalidateQueries({ queryKey: ['users'] })
     },
   })
-
-  const isAdmin = user?.role === 'ADMIN'
-  const isManager = user?.role === 'MANAGER' || isAdmin
 
   const lowStockProducts = products?.filter(p => p.quantity <= p.minStockLevel) || []
 
