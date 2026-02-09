@@ -2,10 +2,40 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const speakeasy = require('speakeasy');
 const QRCode = require('qrcode');
+const mongoose = require('mongoose');
+
 const User = require('../models/User');
 const { protect, generateToken } = require('../middlewares/auth');
+const connectDB = require('../db');
 
 const router = express.Router();
+
+// Middleware to ensure database connection for serverless
+const ensureDBConnection = async (req, res, next) => {
+  try {
+    if (mongoose.connection.readyState !== 1) {
+      await connectDB();
+      if (mongoose.connection.readyState !== 1) {
+        return res.status(500).json({ message: 'Failed to connect to database. Please check MONGODB_URI environment variable.' });
+      }
+    }
+    next();
+  } catch (error) {
+    console.error('Database connection error:', error);
+    return res.status(500).json({ message: 'Database connection failed. Please check MONGODB_URI environment variable.' });
+  }
+};
+
+// Apply DB connection middleware to all routes
+router.use(ensureDBConnection);
+
+// Lightweight debug GET endpoints to help detect client-side blocking
+router.get('/signin', (req, res) => {
+  return res.json({ message: 'Signin endpoint (GET) - use POST to authenticate' });
+});
+router.get('/verify-mfa', (req, res) => {
+  return res.json({ message: 'Verify MFA endpoint (GET) - use POST to verify code' });
+});
 
 // Register new user (ADMIN only)
 router.post('/register', protect, async (req, res, next) => {
@@ -40,8 +70,8 @@ router.post('/register', protect, async (req, res, next) => {
   }
 });
 
-// Login
-router.post('/login', async (req, res, next) => {
+// Sign in (renamed from /login to avoid client blockers)
+router.post('/signin', async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
@@ -74,7 +104,7 @@ router.post('/login', async (req, res, next) => {
     res.cookie('token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
       maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
     });
 
@@ -124,7 +154,7 @@ router.post('/verify-mfa', async (req, res, next) => {
     res.cookie('token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
       maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
     });
 
@@ -207,6 +237,8 @@ router.post('/verify-setup-mfa', protect, async (req, res, next) => {
 router.post('/logout', (req, res) => {
   res.cookie('token', '', {
     httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
     expires: new Date(0)
   });
   res.json({ success: true, message: 'Logged out successfully' });

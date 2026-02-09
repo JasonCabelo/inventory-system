@@ -18,7 +18,7 @@ export default function Login() {
 
   const loginMutation = useMutation({
     mutationFn: async (credentials) => {
-      const { data } = await axiosInstance.post('/auth/login', credentials)
+      const { data } = await axiosInstance.post('/session/signin', credentials)
       return data
     },
     onSuccess: (data) => {
@@ -36,7 +36,7 @@ export default function Login() {
 
   const verifyMFAMutation = useMutation({
     mutationFn: async ({ tempToken, mfaCode }) => {
-      const { data } = await axiosInstance.post('/auth/verify-mfa', { tempToken, mfaCode })
+      const { data } = await axiosInstance.post('/session/verify-mfa', { tempToken, mfaCode })
       return data
     },
     onSuccess: () => {

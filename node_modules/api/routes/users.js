@@ -1,8 +1,31 @@
 const express = require('express');
+const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
 const User = require('../models/User');
 const { protect, restrictTo } = require('../middlewares/auth');
 const { userSchema, validate } = require('../validation/schemas');
+const connectDB = require('../db');
+
 const router = express.Router();
+
+// Middleware to ensure database connection for serverless
+const ensureDBConnection = async (req, res, next) => {
+  try {
+    if (mongoose.connection.readyState !== 1) {
+      await connectDB();
+      if (mongoose.connection.readyState !== 1) {
+        return res.status(500).json({ message: 'Failed to connect to database. Please check MONGODB_URI environment variable.' });
+      }
+    }
+    next();
+  } catch (error) {
+    console.error('Database connection error:', error);
+    return res.status(500).json({ message: 'Database connection failed. Please check MONGODB_URI environment variable.' });
+  }
+};
+
+// Apply DB connection middleware to all routes
+router.use(ensureDBConnection);
 
 // All routes are protected and require ADMIN role
 router.use(protect);
