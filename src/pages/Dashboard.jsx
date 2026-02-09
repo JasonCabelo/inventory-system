@@ -57,12 +57,30 @@ export default function Dashboard() {
     },
   })
 
+  const { data: users } = useQuery({
+    queryKey: ['users'],
+    queryFn: async () => {
+      const { data } = await axiosInstance.get('/users')
+      return data.data
+    },
+    enabled: isAdmin,
+  })
+
   const deleteProductMutation = useMutation({
     mutationFn: async (id) => {
       await axiosInstance.delete(`/products/${id}`)
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['products'] })
+    },
+  })
+
+  const deleteUserMutation = useMutation({
+    mutationFn: async (id) => {
+      await axiosInstance.delete(`/users/${id}`)
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['users'] })
     },
   })
 
@@ -452,7 +470,36 @@ export default function Dashboard() {
                     </tr>
                   </thead>
                   <tbody>
-                    {/* Users data would be fetched here */}
+                    {users?.map((user) => (
+                      <tr key={user._id} className="border-b">
+                        <td className="py-2">{user.name}</td>
+                        <td className="py-2">{user.email}</td>
+                        <td className="py-2">{user.role}</td>
+                        <td className="py-2">
+                          {user.mfaEnabled ? (
+                            <span className="text-green-600">Enabled</span>
+                          ) : (
+                            <span className="text-muted-foreground">Disabled</span>
+                          )}
+                        </td>
+                        <td className="py-2">
+                          <div className="flex gap-2">
+                            <Button variant="ghost" size="sm" asChild>
+                              <Link to={`/users/${user._id}/edit`}>
+                                <Edit className="w-4 h-4" />
+                              </Link>
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => deleteUserMutation.mutate(user._id)}
+                            >
+                              <Trash2 className="w-4 h-4 text-destructive" />
+                            </Button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
                   </tbody>
                 </table>
               </div>
