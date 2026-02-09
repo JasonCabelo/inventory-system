@@ -486,18 +486,6 @@ export default function Dashboard() {
 
             {activeTab === 'users' && (
               <div className="space-y-4">
-                {/* Debug Info - Always visible */}
-                <div className="bg-red-50 border border-red-200 p-4 rounded-lg">
-                  <h3 className="font-bold text-red-800 mb-2">🔍 Debug Information:</h3>
-                  <div className="text-sm space-y-1 font-mono">
-                    <div><strong>Is Admin:</strong> {isAdmin ? '✅ Yes' : '❌ No'}</div>
-                    <div><strong>User Role:</strong> {user?.role || '❌ No user'}</div>
-                    <div><strong>Users Loading:</strong> {usersLoading ? '⏳ Yes' : '✅ No'}</div>
-                    <div><strong>Users Error:</strong> {usersError ? `❌ ${usersError.message}` : '✅ None'}</div>
-                    <div><strong>Users Count:</strong> {users?.length || 0}</div>
-                  </div>
-                </div>
-
                 {usersLoading && (
                   <div className="text-center py-8">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
@@ -566,6 +554,116 @@ export default function Dashboard() {
                     </table>
                   </div>
                 )}
+              </div>
+            )}
+
+            {activeTab === 'debug' && (
+              <div className="space-y-6">
+                <div className="bg-blue-50 border border-blue-200 p-6 rounded-lg">
+                  <h3 className="font-bold text-blue-800 mb-4 text-lg">🔍 System Debug Information</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-3">
+                      <h4 className="font-semibold text-blue-700">Authentication</h4>
+                      <div className="text-sm space-y-1 font-mono bg-white p-3 rounded border">
+                        <div><strong>User ID:</strong> {user?._id || '❌ None'}</div>
+                        <div><strong>User Name:</strong> {user?.name || '❌ None'}</div>
+                        <div><strong>User Email:</strong> {user?.email || '❌ None'}</div>
+                        <div><strong>User Role:</strong> {user?.role || '❌ None'}</div>
+                        <div><strong>Is Admin:</strong> {isAdmin ? '✅ Yes' : '❌ No'}</div>
+                        <div><strong>Is Manager:</strong> {isManager ? '✅ Yes' : '❌ No'}</div>
+                      </div>
+                    </div>
+
+                    <div className="space-y-3">
+                      <h4 className="font-semibold text-blue-700">API Status</h4>
+                      <div className="text-sm space-y-1 font-mono bg-white p-3 rounded border">
+                        <div><strong>Products Loading:</strong> {products?.isLoading ? '⏳ Yes' : '✅ No'}</div>
+                        <div><strong>Products Count:</strong> {products?.length || 0}</div>
+                        <div><strong>Categories Count:</strong> {categories?.length || 0}</div>
+                        <div><strong>Suppliers Count:</strong> {suppliers?.length || 0}</div>
+                        <div><strong>Users Loading:</strong> {usersLoading ? '⏳ Yes' : '✅ No'}</div>
+                        <div><strong>Users Error:</strong> {usersError ? `❌ ${usersError.message}` : '✅ None'}</div>
+                        <div><strong>Users Count:</strong> {users?.length || 0}</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-green-50 border border-green-200 p-6 rounded-lg">
+                  <h3 className="font-bold text-green-800 mb-4 text-lg">📊 Data Overview</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <Card>
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-sm font-medium text-green-700">Products</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="text-2xl font-bold text-green-600">{products?.length || 0}</div>
+                        <p className="text-xs text-green-600 mt-1">
+                          {products?.filter(p => p.quantity <= p.minStockLevel).length || 0} low stock
+                        </p>
+                      </CardContent>
+                    </Card>
+
+                    <Card>
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-sm font-medium text-green-700">Categories</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="text-2xl font-bold text-green-600">{categories?.length || 0}</div>
+                      </CardContent>
+                    </Card>
+
+                    <Card>
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-sm font-medium text-green-700">Users</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="text-2xl font-bold text-green-600">{users?.length || 0}</div>
+                        <p className="text-xs text-green-600 mt-1">
+                          {users?.filter(u => u.role === 'ADMIN').length || 0} admins
+                        </p>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </div>
+
+                <div className="bg-yellow-50 border border-yellow-200 p-6 rounded-lg">
+                  <h3 className="font-bold text-yellow-800 mb-4 text-lg">⚠️ Issues & Alerts</h3>
+                  <div className="space-y-3">
+                    {usersError && (
+                      <Alert variant="destructive">
+                        <AlertDescription>
+                          <strong>Users API Error:</strong> {usersError.message}
+                        </AlertDescription>
+                      </Alert>
+                    )}
+
+                    {products?.filter(p => p.quantity <= p.minStockLevel).length > 0 && (
+                      <Alert>
+                        <AlertTriangle className="h-4 w-4" />
+                        <AlertDescription>
+                          <strong>Low Stock Alert:</strong> {products.filter(p => p.quantity <= p.minStockLevel).length} products are below minimum stock level.
+                        </AlertDescription>
+                      </Alert>
+                    )}
+
+                    {!user && (
+                      <Alert variant="destructive">
+                        <AlertDescription>
+                          <strong>Authentication Issue:</strong> No user data available. Please log in again.
+                        </AlertDescription>
+                      </Alert>
+                    )}
+
+                    {user && !isAdmin && (
+                      <Alert>
+                        <AlertDescription>
+                          <strong>Access Level:</strong> You have {user.role} access. Some features may be restricted.
+                        </AlertDescription>
+                      </Alert>
+                    )}
+                  </div>
+                </div>
               </div>
             )}
           </CardContent>
