@@ -3,8 +3,11 @@ import { useQuery } from '@tanstack/react-query'
 import axios from 'axios'
 
 // In production (Vercel), use relative /api path (same origin).
-// For local dev, set VITE_API_URL=http://localhost:3001/api in .env
+// For local dev, Vite proxy handles /api -> localhost:3001
 const API_URL = import.meta.env.VITE_API_URL || '/api'
+
+console.log('[API] Using baseURL:', API_URL)
+
 
 const axiosInstance = axios.create({
   baseURL: API_URL,
@@ -13,6 +16,11 @@ const axiosInstance = axios.create({
     'Content-Type': 'application/json',
   },
 })
+
+
+// Log API URL for debugging
+console.log('API_URL configured as:', API_URL)
+
 
 export function useAuth() {
   return useQuery({

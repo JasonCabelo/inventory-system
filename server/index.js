@@ -39,12 +39,6 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', message: 'API is running' });
 });
 
-// Serve static frontend files if present
-// NOTE: static frontend serving and SPA fallback are registered AFTER
-// API routes are mounted below. This prevents the SPA catch-all from
-// intercepting `/server/*` requests and returning 404 when the frontend
-// `dist` folder exists.
-
 // Mount routes IMMEDIATELY (don't wait for DB connection)
 console.log('Mounting API routes immediately...');
 try {
@@ -102,18 +96,6 @@ if (hasDB) {
     });
 }
 
-// Serve static frontend files if present (after API routes are mounted)
-const staticPath = path.join(__dirname, '../src/dist');
-if (fs.existsSync(staticPath)) {
-  app.use(express.static(staticPath));
-  app.get('*', (req, res, next) => {
-    if (req.path.startsWith('/api')) return next();
-    const indexPath = path.join(staticPath, 'index.html');
-    if (fs.existsSync(indexPath)) return res.sendFile(indexPath);
-    return res.status(404).send('Frontend not found');
-  });
-}
-
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err && err.stack ? err.stack : err);
@@ -128,7 +110,7 @@ process.on('uncaughtException', (err) => {
   console.error('Uncaught Exception:', err);
 });
 
-// Start local dev server
+// Start local dev server only if not in production (Vercel)
 if (process.env.NODE_ENV !== 'production') {
   const PORT = process.env.PORT || 3001;
   app.listen(PORT, () => {
@@ -136,4 +118,5 @@ if (process.env.NODE_ENV !== 'production') {
   });
 }
 
+// Export for Vercel serverless deployment
 module.exports = app;
