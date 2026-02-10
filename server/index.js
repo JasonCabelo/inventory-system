@@ -26,59 +26,59 @@ app.use(cookieParser());
 app.use(express.json());
 
 // Health check - always available
-app.get('/api/health', (req, res) => {
+app.get('/server/health', (req, res) => {
   res.json({ status: 'OK', message: 'API is running' });
 });
 
 // Serve static frontend files if present
 // NOTE: static frontend serving and SPA fallback are registered AFTER
 // API routes are mounted below. This prevents the SPA catch-all from
-// intercepting `/api/*` requests and returning 404 when the frontend
+// intercepting `/server/*` requests and returning 404 when the frontend
 // `dist` folder exists.
 
 // Mount routes IMMEDIATELY (don't wait for DB connection)
 console.log('Mounting API routes immediately...');
 try {
-  app.use('/api/auth', require('./routes/auth'));
-  console.log('✓ /api/auth mounted');
+  app.use('/server/auth', require('./routes/auth'));
+  console.log('✓ /server/auth mounted');
 } catch (err) {
-  console.error('✗ Error mounting /api/auth:', err && err.message ? err.message : err);
+  console.error('✗ Error mounting /server/auth:', err && err.message ? err.message : err);
 }
 try {
-  app.use('/api/session', require('./routes/auth'));
-  console.log('✓ /api/session mounted');
+  app.use('/server/session', require('./routes/auth'));
+  console.log('✓ /server/session mounted');
 } catch (err) {
-  console.error('✗ Error mounting /api/session:', err && err.message ? err.message : err);
+  console.error('✗ Error mounting /server/session:', err && err.message ? err.message : err);
 }
 try {
-  app.use('/api/users', require('./routes/users'));
-  console.log('✓ /api/users mounted');
+  app.use('/server/users', require('./routes/users'));
+  console.log('✓ /server/users mounted');
 } catch (err) {
-  console.error('✗ Error mounting /api/users:', err && err.message ? err.message : err);
+  console.error('✗ Error mounting /server/users:', err && err.message ? err.message : err);
 }
 try {
-  app.use('/api/products', require('./routes/products'));
-  console.log('✓ /api/products mounted');
+  app.use('/server/products', require('./routes/products'));
+  console.log('✓ /server/products mounted');
 } catch (err) {
-  console.error('✗ Error mounting /api/products:', err && err.message ? err.message : err);
+  console.error('✗ Error mounting /server/products:', err && err.message ? err.message : err);
 }
 try {
-  app.use('/api/categories', require('./routes/categories'));
-  console.log('✓ /api/categories mounted');
+  app.use('/server/categories', require('./routes/categories'));
+  console.log('✓ /server/categories mounted');
 } catch (err) {
-  console.error('✗ Error mounting /api/categories:', err && err.message ? err.message : err);
+  console.error('✗ Error mounting /server/categories:', err && err.message ? err.message : err);
 }
 try {
-  app.use('/api/suppliers', require('./routes/suppliers'));
-  console.log('✓ /api/suppliers mounted');
+  app.use('/server/suppliers', require('./routes/suppliers'));
+  console.log('✓ /server/suppliers mounted');
 } catch (err) {
-  console.error('✗ Error mounting /api/suppliers:', err && err.message ? err.message : err);
+  console.error('✗ Error mounting /server/suppliers:', err && err.message ? err.message : err);
 }
 try {
-  app.use('/api/audit-logs', require('./routes/audit'));
-  console.log('✓ /api/audit-logs mounted');
+  app.use('/server/audit-logs', require('./routes/audit'));
+  console.log('✓ /server/audit-logs mounted');
 } catch (err) {
-  console.error('✗ Error mounting /api/audit-logs:', err && err.message ? err.message : err);
+  console.error('✗ Error mounting /server/audit-logs:', err && err.message ? err.message : err);
 }
 
 // Connect to DB asynchronously (don't block route mounting)
@@ -100,7 +100,7 @@ const staticPath = path.join(__dirname, '../dist');
 if (fs.existsSync(staticPath)) {
   app.use(express.static(staticPath));
   app.get('*', (req, res, next) => {
-    if (req.path.startsWith('/api')) return next();
+    if (req.path.startsWith('/server')) return next();
     const indexPath = path.join(staticPath, 'index.html');
     if (fs.existsSync(indexPath)) return res.sendFile(indexPath);
     return res.status(404).send('Frontend not found');

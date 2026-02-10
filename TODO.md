@@ -1,7 +1,7 @@
 # Fix 500 Internal Server Error for API Endpoints
 
 ## Tasks
-- [x] Investigate the 500 error on POST /api/session/signin and POST /api/users
+- [x] Investigate the 500 error on POST /server/session/signin and POST /server/users
 - [x] Add database connection middleware to all route files
 - [x] Ensure mongoose is imported in all route files
 - [x] Fix duplicate database connection logic in index.js

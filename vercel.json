@@ -1,31 +1,13 @@
 {
   "version": 2,
-  "buildCommand": "npm run build",
-  "builds": [
+  "rewrites": [
     {
-      "src": "api/index.js",
-      "use": "@vercel/node"
+      "source": "/server/:path*",
+      "destination": "/server/index.js"
     },
     {
-      "src": "dist/**",
-      "use": "@vercel/static"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "/api/index.js",
-      "headers": {
-        "x-vercel-protection-bypass": "true"
-      }
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/dist/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/dist/index.html"
+      "source": "/((?!server/).*)",
+      "destination": "/index.html"
     }
   ]
 }
