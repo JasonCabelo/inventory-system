@@ -6,7 +6,7 @@ const connectDB = require('../db');
 
 const router = express.Router();
 
-// Middleware to ensure database connection for serverless
+// Middleware to ensure database connection for apiless
 const ensureDBConnection = async (req, res, next) => {
   try {
     if (mongoose.connection.readyState !== 1) {

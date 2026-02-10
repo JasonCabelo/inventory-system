@@ -5,11 +5,11 @@ This document outlines the development plan for a production-ready Enterprise In
 
 ## Architecture
 - **Monorepo Structure**:
-  - `/server`: Express.js backend deployed as Vercel serverless functions.
+  - `/api`: Express.js backend deployed as Vercel apiless functions.
   - `/src`: React frontend built with Vite.
   - Root: `vercel.json` for routing configuration and `package.json` for workspace management.
 - **Deployment**: Vercel with monorepo configuration.
-- **Routing**: `/server/(.*)` routes to `/server/index.js`, all others to `/index.html`.
+- **Routing**: `/api/(.*)` routes to `/api/index.js`, all others to `/index.html`.
 
 ## Security Features
 - **Authentication**: JWT tokens stored in httpOnly cookies.
@@ -56,45 +56,45 @@ This document outlines the development plan for a production-ready Enterprise In
 
 ## API Endpoints Documentation
 ### Authentication
-- `POST /server/auth/login`: Login with email/password, returns JWT and MFA challenge if enabled.
-- `POST /server/auth/verify-mfa`: Verify TOTP code.
-- `POST /server/auth/logout`: Clear JWT cookie.
-- `POST /server/auth/register`: Register new user (ADMIN only).
-- `GET /server/auth/me`: Get current user info.
+- `POST /api/auth/login`: Login with email/password, returns JWT and MFA challenge if enabled.
+- `POST /api/auth/verify-mfa`: Verify TOTP code.
+- `POST /api/auth/logout`: Clear JWT cookie.
+- `POST /api/auth/register`: Register new user (ADMIN only).
+- `GET /api/auth/me`: Get current user info.
 
 ### Users
-- `GET /server/users`: List users (ADMIN).
-- `POST /server/users`: Create user (ADMIN).
-- `PUT /server/users/:id`: Update user (ADMIN).
-- `DELETE /server/users/:id`: Delete user (ADMIN).
-- `POST /server/users/:id/setup-mfa`: Setup MFA for user.
-- `POST /server/users/:id/verify-mfa`: Verify MFA setup.
+- `GET /api/users`: List users (ADMIN).
+- `POST /api/users`: Create user (ADMIN).
+- `PUT /api/users/:id`: Update user (ADMIN).
+- `DELETE /api/users/:id`: Delete user (ADMIN).
+- `POST /api/users/:id/setup-mfa`: Setup MFA for user.
+- `POST /api/users/:id/verify-mfa`: Verify MFA setup.
 
 ### Products
-- `GET /server/products`: List products (all roles).
-- `POST /server/products`: Create product (MANAGER+).
-- `PUT /server/products/:id`: Update product (MANAGER+).
-- `DELETE /server/products/:id`: Delete product (MANAGER+).
+- `GET /api/products`: List products (all roles).
+- `POST /api/products`: Create product (MANAGER+).
+- `PUT /api/products/:id`: Update product (MANAGER+).
+- `DELETE /api/products/:id`: Delete product (MANAGER+).
 
 ### Categories
-- `GET /server/categories`: List categories.
-- `POST /server/categories`: Create category (MANAGER+).
-- `PUT /server/categories/:id`: Update category (MANAGER+).
-- `DELETE /server/categories/:id`: Delete category (MANAGER+).
+- `GET /api/categories`: List categories.
+- `POST /api/categories`: Create category (MANAGER+).
+- `PUT /api/categories/:id`: Update category (MANAGER+).
+- `DELETE /api/categories/:id`: Delete category (MANAGER+).
 
 ### Suppliers
-- `GET /server/suppliers`: List suppliers.
-- `POST /server/suppliers`: Create supplier (MANAGER+).
-- `PUT /server/suppliers/:id`: Update supplier (MANAGER+).
-- `DELETE /server/suppliers/:id`: Delete supplier (MANAGER+).
+- `GET /api/suppliers`: List suppliers.
+- `POST /api/suppliers`: Create supplier (MANAGER+).
+- `PUT /api/suppliers/:id`: Update supplier (MANAGER+).
+- `DELETE /api/suppliers/:id`: Delete supplier (MANAGER+).
 
 ### Audit Logs
-- `GET /server/audit-logs`: View audit logs (ADMIN).
+- `GET /api/audit-logs`: View audit logs (ADMIN).
 
 ## Development Phases
 ### Phase 1: Foundation (Completed)
 - [x] Create DEVELOPMENT_PLAN.md
-- [x] Initialize folder structure (/server, /src)
+- [x] Initialize folder structure (/api, /src)
 - [x] Setup root package.json with workspaces
 - [x] Create vercel.json
 - [x] Install dependencies
@@ -115,7 +115,7 @@ This document outlines the development plan for a production-ready Enterprise In
 
 
 ## Dependencies
-- Backend (/server): mongoose, jsonwebtoken, speakeasy, qrcode, zod, cors, dotenv
+- Backend (/api): mongoose, jsonwebtoken, speakeasy, qrcode, zod, cors, dotenv
 - Frontend (/src): @tanstack/react-query, lucide-react, axios
 - Shared: (managed via workspaces)
 

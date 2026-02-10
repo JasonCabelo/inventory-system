@@ -1,7 +1,7 @@
 # Fix 500 Internal Server Error for API Endpoints
 
 ## Tasks
-- [x] Investigate the 500 error on POST /server/session/signin and POST /server/users
+- [x] Investigate the 500 error on POST /api/session/signin and POST /api/users
 - [x] Add database connection middleware to all route files
 - [x] Ensure mongoose is imported in all route files
 - [x] Fix duplicate database connection logic in index.js
@@ -11,7 +11,7 @@
 - [x] Test the endpoints after deployment (blocked by Vercel authentication)
 
 ## Information Gathered
-- The error occurs in Vercel's serverless environment where each request is a new instance
+- The error occurs in Vercel's apiless environment where each request is a new instance
 - Database connection was not being established before handling requests in all route files
 - Routes were mounted before DB connection, causing Mongoose operations to fail
 - Missing environment variables (JWT_SECRET, MONGODB_URI) could cause 500 errors
