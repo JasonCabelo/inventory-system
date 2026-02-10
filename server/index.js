@@ -96,7 +96,6 @@ if (hasDB) {
 
 
 // Serve static frontend files if present (after API routes are mounted)
-const staticPath = path.join(__dirname, '../dist');
 if (fs.existsSync(staticPath)) {
   app.use(express.static(staticPath));
   app.get('*', (req, res, next) => {
