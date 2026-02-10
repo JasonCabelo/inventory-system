@@ -2,15 +2,15 @@
   "name": "enterprise-inventory-system",
   "version": "1.0.0",
   "private": true,
-  "workspaces": [
-    "api",
-    "src"
-  ],
+"workspaces": [
+  "server",
+  "src"
+],
   "scripts": {
     "install:all": "npm install",
-    "dev": "concurrently \"npm run dev --workspace=api\" \"npm run dev --workspace=src\"",
-    "build": "npm run build --workspace=src",
-    "start": "npm run start --workspace=api"
+"dev": "concurrently \"npm run dev --workspace=server\" \"npm run dev --workspace=src\"",
+  "build": "npm run build --workspace=src",
+  "start": "npm run start --workspace=server"
   },
   "devDependencies": {
     "concurrently": "^8.2.1"
