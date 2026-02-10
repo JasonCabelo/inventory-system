@@ -18,7 +18,7 @@ export default function Login() {
 
   const loginMutation = useMutation({
     mutationFn: async (credentials) => {
-      const { data } = await axiosInstance.post('/session/signin', credentials)
+      const { data } = await axiosInstance.post('/auth/signin', credentials)
       return data
     },
     onSuccess: (data) => {
