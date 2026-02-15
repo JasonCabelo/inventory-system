@@ -50,14 +50,18 @@ try {
   process.stdout.write('✓\n');
 
   // Middleware
-  // Simple CORS - allow all origins for now (debugging)
+  // CORS configuration
+  // If FRONTEND_URL is set, allow credentialed requests from that origin.
+  const FRONTEND_URL = process.env.FRONTEND_URL || '';
+  const allowCredentials = !!FRONTEND_URL;
+
   const corsOptions = {
-    origin: '*',  // Allow all origins
-    credentials: false,  // Can't use credentials with '*'
+    origin: FRONTEND_URL || '*',
+    credentials: allowCredentials,
     methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
     exposedHeaders: ['Content-Type', 'Authorization'],
-    maxAge: 86400  // 24 hours
+    maxAge: 86400 // 24 hours
   };
 
   app.use(cors(corsOptions));
@@ -65,16 +69,24 @@ try {
   // Explicit CORS headers middleware for extra safety
   app.use((req, res, next) => {
     const origin = req.headers.origin || '*';
-    res.header('Access-Control-Allow-Origin', origin);
+    // If credentials are allowed, Access-Control-Allow-Origin must be explicit (not '*')
+    if (allowCredentials) {
+      // Only echo the configured FRONTEND_URL to avoid reflecting arbitrary origins
+      res.header('Access-Control-Allow-Origin', FRONTEND_URL);
+      res.header('Access-Control-Allow-Credentials', 'true');
+    } else {
+      res.header('Access-Control-Allow-Origin', origin);
+    }
+
     res.header('Access-Control-Allow-Methods', 'GET, HEAD, PUT, PATCH, POST, DELETE, OPTIONS');
     res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Accept');
     res.header('Access-Control-Expose-Headers', 'Content-Type, Authorization');
-    
+
     // Handle preflight
     if (req.method === 'OPTIONS') {
       return res.sendStatus(200);
     }
-    
+
     next();
   });
 
