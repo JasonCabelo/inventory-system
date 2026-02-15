@@ -10,10 +10,13 @@ export default defineConfig({
       '@': path.resolve(__dirname, './'),
     },
   },
+  // Use environment variable for API URL in production
+  // In development, proxy to localhost:3001
+  // In production, use the configured VITE_API_URL
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:3001',
+        target: process.env.VITE_API_URL || 'http://localhost:3001',
         changeOrigin: true,
       },
     },
