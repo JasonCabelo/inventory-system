@@ -16,9 +16,3 @@ services:
         value: production
       - key: JWT_EXPIRES_IN
         value: 30d
-
-  - type: web
-    name: inventory-web
-    staticPublishPath: ./src/dist
-    buildCommand: npm run build --workspace=src
-    rootDir: ./src
