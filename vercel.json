@@ -2,31 +2,14 @@
   "version": 2,
   "buildCommand": "npm run build --workspace=src",
   "outputDirectory": "src/dist",
-  "builds": [
-    {
-      "src": "src/package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "dist"
-      }
-    },
-    {
-      "src": "api/index.js",
-      "use": "@vercel/node"
-    }
-  ],
+  "env": {
+    "VITE_API_URL": "https://inventory-api85mb.onrender.com/api",
+    "NODE_ENV": "production"
+  },
   "routes": [
     {
-      "src": "/api/(.*)",
-      "dest": "/api/index.js"
-    },
-    {
       "src": "/(.*)",
-      "dest": "src/dist/index.html"
+      "dest": "/index.html"
     }
-  ],
-  "env": {
-    "VITE_API_URL": "https://$VERCEL_URL/api",
-    "NODE_ENV": "production"
-  }
+  ]
 }
