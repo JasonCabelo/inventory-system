@@ -207,6 +207,7 @@ export default function Dashboard() {
             Suppliers
           </Button>
           {isAdmin && (
+          <>
             <Button
               variant={activeTab === 'users' ? 'default' : 'outline'}
               onClick={() => setActiveTab('users')}
@@ -215,7 +216,8 @@ export default function Dashboard() {
               <Users className="w-4 h-4 mr-2" />
               Users
             </Button>
-          )}
+
+
           <Button
             variant={activeTab === 'debug' ? 'default' : 'outline'}
             onClick={() => setActiveTab('debug')}
@@ -223,8 +225,11 @@ export default function Dashboard() {
           >
             🔍 Debug
           </Button>
-        </div>
+        
+            </>
+          )}
 
+</div>
         {/* Content */}
         <Card>
           <CardHeader>
