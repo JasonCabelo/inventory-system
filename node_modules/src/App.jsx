@@ -76,6 +76,14 @@ function App() {
             </ProtectedRoute>
           } 
         />
+                <Route 
+          path="/users/:id/edit" 
+          element={
+            <ProtectedRoute allowedRoles={['ADMIN']}>
+              <UserEditForm />
+            </ProtectedRoute>
+          } 
+        />
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
       </Routes>
     </Router>
