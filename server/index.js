@@ -110,13 +110,12 @@ process.on('uncaughtException', (err) => {
   console.error('Uncaught Exception:', err);
 });
 
-// Start local dev server only if not in production (Vercel)
-if (process.env.NODE_ENV !== 'production') {
-  const PORT = process.env.PORT || 3001;
-  app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-  });
-}
+// Start server - needed for all platforms (Render, traditional hosting)
+// For Vercel serverless, this just won't run, but we export the app anyway
+const PORT = process.env.PORT || 3001;
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server running on port ${PORT}`);
+});
 
 // Export for Vercel serverless deployment
 module.exports = app;
