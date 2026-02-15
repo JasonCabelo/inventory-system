@@ -13,52 +13,36 @@ const connectDB = require('./db');
 const app = express();
 
 // Middleware
-// CORS configuration - allow frontend to call API
+// Simple CORS - allow all origins for now (debugging)
 const corsOptions = {
-  origin: function (origin, callback) {
-    // List of allowed origins
-    const allowedOrigins = [
-      'http://localhost:5173',     // Local dev
-      'http://localhost:5174',     // Alternate local dev
-      'http://localhost:3001',     // Local server
-    ];
-    
-    // Allow vercel.app deployments
-    if (origin && origin.includes('vercel.app')) {
-      allowedOrigins.push(origin);
-      return callback(null, true);
-    }
-    
-    // Allow requests with no origin (curl, Postman)
-    if (!origin) {
-      return callback(null, true);
-    }
-    
-    // Check if origin is in allowed list
-    if (allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    }
-    
-    // If FRONTEND_URL is set in env, allow it
-    const frontendUrl = process.env.FRONTEND_URL;
-    if (frontendUrl && origin === frontendUrl) {
-      return callback(null, true);
-    }
-    
-    console.log('CORS blocked origin:', origin);
-    return callback(null, true); // Allow all for now - easier debugging
-  },
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  origin: '*',  // Allow all origins
+  credentials: false,  // Can't use credentials with '*'
+  methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
+  exposedHeaders: ['Content-Type', 'Authorization'],
+  maxAge: 86400  // 24 hours
 };
 
 app.use(cors(corsOptions));
+
+// Explicit CORS headers middleware for extra safety
+app.use((req, res, next) => {
+  const origin = req.headers.origin || '*';
+  res.header('Access-Control-Allow-Origin', origin);
+  res.header('Access-Control-Allow-Methods', 'GET, HEAD, PUT, PATCH, POST, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Accept');
+  res.header('Access-Control-Expose-Headers', 'Content-Type, Authorization');
+  
+  // Handle preflight
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(200);
+  }
+  
+  next();
+});
+
 app.use(cookieParser());
 app.use(express.json());
-
-// Preflight requests handler (for CORS)
-app.options('*', cors(corsOptions));
 
 // Health check - always available
 app.get('/api/health', (req, res) => {
