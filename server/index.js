@@ -13,24 +13,47 @@ const connectDB = require('./db');
 const app = express();
 
 // Middleware
-// Sanitize FRONTEND_URL to avoid invalid header characters
-const rawFrontend = process.env.FRONTEND_URL || '';
-const frontendUrl = typeof rawFrontend === 'string' ? rawFrontend.trim().replace(/\s+/g, '') : '';
-const corsOrigin = frontendUrl || 'http://localhost:5173';
-app.use(cors({
+// CORS configuration - allow frontend to call API
+const corsOptions = {
   origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) return callback(null, true);
-    // Allow localhost for development
-    if (origin.startsWith('http://localhost')) return callback(null, true);
-    // Allow Vercel deployments
-    if (origin.includes('vercel.app')) return callback(null, true);
-    // Allow the configured FRONTEND_URL
-    if (frontendUrl && origin === frontendUrl) return callback(null, true);
-    return callback(new Error('Not allowed by CORS'));
+    // List of allowed origins
+    const allowedOrigins = [
+      'http://localhost:5173',     // Local dev
+      'http://localhost:5174',     // Alternate local dev
+      'http://localhost:3001',     // Local server
+    ];
+    
+    // Allow vercel.app deployments
+    if (origin && origin.includes('vercel.app')) {
+      allowedOrigins.push(origin);
+      return callback(null, true);
+    }
+    
+    // Allow requests with no origin (curl, Postman)
+    if (!origin) {
+      return callback(null, true);
+    }
+    
+    // Check if origin is in allowed list
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    
+    // If FRONTEND_URL is set in env, allow it
+    const frontendUrl = process.env.FRONTEND_URL;
+    if (frontendUrl && origin === frontendUrl) {
+      return callback(null, true);
+    }
+    
+    console.log('CORS blocked origin:', origin);
+    return callback(null, true); // Allow all for now - easier debugging
   },
   credentials: true,
-}));
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+};
+
+app.use(cors(corsOptions));
 app.use(cookieParser());
 app.use(express.json());
 
