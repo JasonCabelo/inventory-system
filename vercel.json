@@ -2,14 +2,8 @@
   "version": 2,
   "buildCommand": "npm run build --workspace=src",
   "outputDirectory": "src/dist",
+  "framework": "vite",
   "env": {
-    "VITE_API_URL": "https://inventory-api85mb.onrender.com/api",
-    "NODE_ENV": "production"
-  },
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
-    }
-  ]
+    "VITE_API_URL": "https://inventory-api85mb.onrender.com/api"
+  }
 }
