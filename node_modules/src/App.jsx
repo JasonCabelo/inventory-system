@@ -6,6 +6,7 @@ import ProductForm from '@/pages/ProductForm'
 import CategoryForm from '@/pages/CategoryForm'
 import SupplierForm from '@/pages/SupplierForm'
 import UserForm from '@/pages/UserForm'
+import UserEditForm from '@/pages/UserEditForm'
 
 function App() {
   return (
