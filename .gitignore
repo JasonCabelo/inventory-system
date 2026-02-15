@@ -46,8 +46,6 @@ coverage/
 render-data/
 
 # Deployment and instructions (keep private)
-DEPLOYMENT*.md
-DEPLOYMENT_INSTRUCTIONS.md
-DEPLOYMENT_PLAN.md
-# Ignore all Markdown files (per user request)
+# (Markdown files are tracked per project decision)
+# Ignore all Markdown files (keep locally, remove from repo)
 *.md
