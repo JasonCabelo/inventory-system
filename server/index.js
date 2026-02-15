@@ -57,9 +57,18 @@ app.use(cors(corsOptions));
 app.use(cookieParser());
 app.use(express.json());
 
+// Preflight requests handler (for CORS)
+app.options('*', cors(corsOptions));
+
 // Health check - always available
 app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', message: 'API is running' });
+});
+
+// Add logging middleware
+app.use((req, res, next) => {
+  console.log(`${new Date().toISOString()} ${req.method} ${req.path}`);
+  next();
 });
 
 // Mount routes IMMEDIATELY (don't wait for DB connection)
