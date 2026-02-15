@@ -5,10 +5,39 @@ const dotenv = require('dotenv');
 const path = require('path');
 const fs = require('fs');
 
-// Load environment variables from parent directory
-dotenv.config({ path: path.join(__dirname, '..', '.env') });
+// Load environment variables from parent directory if it exists (for local dev)
+// In production (Render), these will come from env vars set in the dashboard
+const envPath = path.join(__dirname, '..', '.env');
+if (fs.existsSync(envPath)) {
+  dotenv.config({ path: envPath });
+  console.log('✓ Loaded .env from parent directory');
+} else {
+  console.log('ℹ No .env file found - using environment variables from system/dashboard');
+}
 
-const connectDB = require('./db');
+// Log startup
+console.log(`
+╔════════════════════════════════════════╗
+║ Enterprise Inventory System - API Server
+║ Environment: ${process.env.NODE_ENV || 'development'}
+╚════════════════════════════════════════╝
+`);
+
+// Verify critical environment variables
+if (!process.env.MONGODB_URI) {
+  console.warn('⚠️  WARNING: MONGODB_URI not set - database operations will fail');
+}
+if (!process.env.JWT_SECRET) {
+  console.warn('⚠️  WARNING: JWT_SECRET not set - authentication will fail');
+}
+
+let connectDB;
+try {
+  connectDB = require('./db');
+} catch (err) {
+  console.error('✗ Error loading database module:', err.message);
+  process.exit(1);
+}
 
 const app = express();
 
@@ -158,8 +187,21 @@ process.on('uncaughtException', (err) => {
 // Start server - needed for all platforms (Render, traditional hosting)
 // For Vercel serverless, this just won't run, but we export the app anyway
 const PORT = process.env.PORT || 3001;
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Server running on port ${PORT}`);
+
+const server = app.listen(PORT, '0.0.0.0', () => {
+  console.log(`
+╔════════════════════════════════════════╗
+║ ✅ Server running on port ${PORT}
+║ 📍 Listening on 0.0.0.0
+║ 🌍 Ready to accept requests
+╚════════════════════════════════════════╝
+  `);
+});
+
+// Handle server errors
+server.on('error', (err) => {
+  console.error('Server error:', err);
+  process.exit(1);
 });
 
 // Export for Vercel serverless deployment
