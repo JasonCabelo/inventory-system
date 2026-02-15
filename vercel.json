@@ -4,6 +4,9 @@
   "outputDirectory": "src/dist",
   "framework": "vite",
   "env": {
-    "VITE_API_URL": "https://inventory-api85mb.onrender.com/api"
+    "VITE_API_URL": "https://inventory-api85mb.onrender.com/api",
+     "rewrites": [
+    { "source": "/(.*)", "destination": "/" }
+  ]
   }
 }
