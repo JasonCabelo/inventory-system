@@ -96,6 +96,35 @@ if (hasDB) {
     });
 }
 
+// Root route
+app.get('/', (req, res) => {
+  res.json({
+    status: 'OK',
+    message: 'Enterprise Inventory System API',
+    version: '1.0.0',
+    endpoints: {
+      health: '/api/health',
+      auth: '/api/auth',
+      session: '/api/session',
+      users: '/api/users',
+      products: '/api/products',
+      categories: '/api/categories',
+      suppliers: '/api/suppliers',
+      auditLogs: '/api/audit-logs'
+    }
+  });
+});
+
+// 404 handler - must come after all other routes
+app.use((req, res) => {
+  res.status(404).json({
+    status: 'error',
+    message: 'Route not found',
+    path: req.path,
+    method: req.method
+  });
+});
+
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err && err.stack ? err.stack : err);
