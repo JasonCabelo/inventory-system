@@ -31,3 +31,23 @@ Thumbs.db
 .vercel/
 .vercel
 .env*.local
+
+# Logs
+logs/
+*.log
+
+# Coverage and caches
+.nyc_output/
+.cache/
+coverage/
+
+# Render local directories
+.render/
+render-data/
+
+# Deployment and instructions (keep private)
+DEPLOYMENT*.md
+DEPLOYMENT_INSTRUCTIONS.md
+DEPLOYMENT_PLAN.md
+# Ignore all Markdown files (per user request)
+*.md
