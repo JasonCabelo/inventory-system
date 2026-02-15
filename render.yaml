@@ -17,10 +17,8 @@ services:
       - key: JWT_EXPIRES_IN
         value: 30d
 
-  - type: web
+  - type: static site
     name: inventory-web
     staticPublishPath: ./src/dist
     buildCommand: npm run build --workspace=src
-    envVars:
-      - key: VITE_API_URL
-        value: https://inventory-api.onrender.com/api
+    rootDir: ./src
