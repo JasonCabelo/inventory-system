@@ -49,3 +49,5 @@ render-data/
 # (Markdown files are tracked per project decision)
 # Ignore all Markdown files (keep locally, remove from repo)
 *.md
+# Scritps and deployment files (keep locally, remove from repo)
+scripts/
